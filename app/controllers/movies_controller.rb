@@ -7,13 +7,25 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    if (params[:sort_by_title])
+       @movies=Movie.all.sort_by{|m| m.title}
+    else
+       @movies = Movie.all
+    end
+    if (params[:sort_by_release_date])
+       @movies=@movies.sort_by{|m| m.release_date}
+    end
   end
 
   def new
     # default: render 'new' template
   end
-
+  def sort_by_title
+    redirect_to movies_path({:sort_by_title => true})
+  end
+  def sort_by_release_date
+    redirect_to movies_path({:sort_by_release_date => true})
+  end
   def create
     @movie = Movie.create!(params[:movie])
     flash[:notice] = "#{@movie.title} was successfully created."
