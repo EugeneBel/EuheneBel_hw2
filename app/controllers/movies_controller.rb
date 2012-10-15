@@ -7,6 +7,7 @@ class MoviesController < ApplicationController
   end
 
   def index
+
     @all_ratings=Movie.all_ratings
     if ((params["ratings"])&&(! @rat))
        @rat=params["ratings"].keys
@@ -20,6 +21,8 @@ class MoviesController < ApplicationController
     if (params["sort_by_release_date"]=="true")
        @movies.sort_by!{|m| m.release_date}
     end
+    session.clear
+    session.merge!(params)
   end
 
   def new
