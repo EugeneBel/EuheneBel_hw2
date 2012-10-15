@@ -23,7 +23,7 @@ class MoviesController < ApplicationController
        @movies.sort_by!{|m| m.release_date}
     end
 
-    if ((params["sort_by_title"]||params["ratings"])||(!(session["sort_by_title"]&&session["ratings"])))
+    if ((params["sort_by_title"]||params["ratings"])||(!(session["sort_by_title"]||session["ratings"])))
     session.clear
     session.merge!(params)
   else
