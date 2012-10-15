@@ -7,10 +7,11 @@ class MoviesController < ApplicationController
   end
 
   def index
-
+ 
     @all_ratings=Movie.all_ratings
-    if ((params["ratings"])&&(! @rat))
+    if ((params["ratings"]))
        @rat=params["ratings"].keys
+       params.merge({"good"=>"true"})
     else
        @rat=@all_ratings
     end
@@ -21,8 +22,21 @@ class MoviesController < ApplicationController
     if (params["sort_by_release_date"]=="true")
        @movies.sort_by!{|m| m.release_date}
     end
+
+    if ((params["sort_by_title"]||params["ratings"])||(!(session["sort_by_title"]&&session["ratings"])))
     session.clear
     session.merge!(params)
+  else
+    hs={}
+    session.each do |s|
+    if (["sort_by_title","sort_by_release_date","ratings"].include?(s[0]))
+    hs.merge!({s[0]=>s[1]})
+  end
+    end
+    flash.keep
+    redirect_to movies_path(hs)
+  end
+
   end
 
   def new
