@@ -7,13 +7,18 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if (params[:sort_by_title])
-       @movies=Movie.all.sort_by{|m| m.title}
+    @all_ratings=Movie.all_ratings
+    if ((params["ratings"])&&(! @rat))
+       @rat=params["ratings"].keys
     else
-       @movies = Movie.all
+       @rat=@all_ratings
     end
-    if (params[:sort_by_release_date])
-       @movies=@movies.sort_by{|m| m.release_date}
+    @movies = Movie.find_all_by_rating(@rat)
+    if (params["sort_by_title"]=="true")
+       @movies.sort_by!{|m| m.title}
+    end
+    if (params["sort_by_release_date"]=="true")
+       @movies.sort_by!{|m| m.release_date}
     end
   end
 
@@ -21,7 +26,7 @@ class MoviesController < ApplicationController
     # default: render 'new' template
   end
   def sort_by_title
-    redirect_to movies_path({:sort_by_title => true})
+    redirect_to movies_path
   end
   def sort_by_release_date
     redirect_to movies_path({:sort_by_release_date => true})
